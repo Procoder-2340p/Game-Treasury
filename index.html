@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameTreasury | Discover & Download</title>
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --bg-main: #121212;
+            --bg-card: #18181c;
+            --bg-hover: #2a2a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --accent-color: #0074e4;
+            --accent-hover: #0056a8;
+            --font-stack: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-stack);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- NAVBAR --- */
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid #202024;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-bar {
+            background-color: #202024;
+            border: 1px solid #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            outline: none;
+            width: 250px;
+            transition: width 0.3s ease, border-color 0.3s ease;
+        }
+
+        .search-bar:focus {
+            width: 320px;
+            border-color: var(--accent-color);
+        }
+
+        /* --- MAIN GRID CONTAINER --- */
+        .main-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px 60px 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #202024;
+            padding-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .results-count {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* --- NO RESULTS MESSAGE --- */
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 18px;
+            width: 100%;
+            grid-column: 1 / -1;
+        }
+
+        .games-grid {
+            display: grid;
+            /* Increased to 310px to perfectly fit 4 cards across your 1400px container */
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); 
+            gap: 25px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;    
+        }
+
+        /* --- STANDARD GAME CARD --- */
+        .game-card {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #202024;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            width: 100%;        
+            height: 420px;      /* Slightly taller to accommodate wider 4-column format */
+            box-sizing: border-box; 
+            transform: translateZ(0);
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            background-color: var(--bg-hover);
+        }
+
+ /* --- MODERN EDGE-TO-EDGE IMAGE BOX --- */
+        .game-img-container {
+            position: relative;
+            width: 100%;
+            height: 200px;      /* Taller image space for the wider cards */
+            overflow: hidden;
+            background-color: #0f0f12; 
+        }
+
+.game-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;  /* Fills the entire box edge-to-edge flawlessly */
+            object-position: center;
+        }
+
+        .game-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: hidden; 
+        }
+
+        .game-type {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #888;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .game-name {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .game-description {
+            font-size: 14px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; 
+            -webkit-box-orient: vertical;
+            overflow: hidden; 
+            margin-bottom: auto; 
+        }
+
+        .card-footer {
+            margin-top: auto;
+            padding-top: 10px;
+        }
+
+        .btn-download {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 15px;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 6px;
+            display: block;
+            text-align: center;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-download:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-download:active {
+            transform: scale(0.98);
+        }
+
+        /* --- FEATURED CARD FIX FOR 4-COLUMN LAYOUT --- */
+        .featured-card {
+            grid-column: span 4;         /* Takes up exactly 2 of your 4 columns */
+            height: 600px;               
+            background-color: #1f1f24; 
+            border: 2px solid var(--accent-color); 
+            border-radius: 12px;       
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;      
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            transform: translateZ(0);  
+        }
+
+.featured-card .game-img-container {
+            width: 100%;               
+            height: 550px;               
+            overflow: hidden;            
+            position: relative;
+        }
+
+.featured-card .game-img-container .game-img {
+            width: 100%;                 
+            height: 100%;                
+            object-fit: cover;           
+            object-position: center;     
+        }
+
+/* The Bottom Content Layer */
+.featured-card .game-info {
+    padding: 20px;               /* Extra breathing room for the text inside a large card */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.featured-card .game-name {
+    color: #ff9900;            
+    font-size: 24px;             /* Bigger title font for the spotlight feature */
+    white-space: normal;       
+    overflow: visible;
+    text-overflow: clip;
+    margin-bottom: 10px;
+}
+
+/* --- FOOTER --- */
+        footer {
+            background-color: var(--bg-card);
+            padding: 30px 20px;
+            border-top: 1px solid #202024;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+
+/* --- FOOTER SOCIAL LINKS --- */
+.footer-socials {
+    margin-top: 15px; /* Puts some space between the copyright text and the button */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.youtube-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Puts a small gap between the logo and the text */
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    padding: 5px 10px;
+}
+
+/* Adjust the YouTube logo size and default color independently */
+.youtube-logo {
+    font-size: 20px; /* Makes the logo slightly larger than the text */
+    color: var(--text-secondary); 
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover effects */
+.youtube-link:hover {
+    color: #ffffff; /* Turns the text white on hover */
+}
+
+.youtube-link:hover .youtube-logo {
+    color: #ff0000; /* Snaps the YouTube icon to its official red brand color on hover */
+    transform: scale(1.1); /* Gives the icon a tiny, clean pop-out effect */
+}    
+
+/* --- WELCOME NOTICE OVERLAY SYSTEM --- */
+        
+        /* Utility class to stop users from scrolling the site behind the notice */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 10, 12, 0.88); /* Deep dark backdrop overlay */
+            backdrop-filter: blur(10px);               /* Beautiful glass blur effect */
+            -webkit-backdrop-filter: blur(10px);       /* Safari patch */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;                           /* Sits above absolute everything else */
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        /* Class utilized by JavaScript to dismiss the notice seamlessly */
+        .modal-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* The central notice box card */
+        .modal-box {
+            background-color: #1c1c22;
+            border: 2px solid var(--accent-color);
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 520px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+            transform: scale(1);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); /* Slight bouncy entry */
+        }
+
+        .modal-overlay.hidden .modal-box {
+            transform: scale(0.9);
+        }
+
+        .modal-box h2 {
+            color: #ff9900; /* Vibrant spotlight banner color */
+            font-size: 26px;
+            margin-bottom: 15px;
+        }
+
+        .modal-box p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Styled Notice Confirmation Button */
+        .modal-btn {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            padding: 14px 35px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 116, 228, 0.3);
+        }
+
+        .modal-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .modal-btn:active {
+            transform: translateY(0);
+        }
+
+</style>
+</head>
+<body>
+
+<div id="welcomeModal" class="modal-overlay hidden">
+    <div class="modal-box">
+        <h2>⚠️ Important Announcement</h2>
+        <p>Welcome to GameVault! This website is Bulid with precise and creative ways for better experience. We will always update the website on weekly basis. All product links point to official distribution stores. Click below to confirm you accept the catalog guidelines and continue to the archive.</p>
+<p>⚠️ For any inquery contact us on - kaedroskeyl@gmail.com
+        <button id="closeModalBtn" class="modal-btn">Continue to Site</button>
+    </div>
+</div>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">GAME<span>TREASURY</span></div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#">Store</a></li>
+                    <li><a href="https://www.google.com/">Browse</a></li>
+                    <li><a href="https://www.youtube.com/@Plixelia-Gaming">Youtube channel</a></li>
+                </ul>
+            </nav>
+            <div class="search-container">
+                <input type="text" class="search-bar" id="gameSearch" placeholder="Search popular games...">
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="section-header">
+            <h2 class="section-title">Popular Games Catalog</h2>
+            <div class="results-count" id="matchCount">Showing Catalog</div>
+        </div>
+
+        <div class="games-grid" id="gamesGrid">
+            
+            <div class="game-card featured-card">
+                <div class="game-img-container">
+                    <img src="https://gaming-cdn.com/images/products/2462/orig-fallback-v1/grand-theft-auto-vi-pc-rockstar-cover.jpg?v=1777888236" alt="Featured Game" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Featured Release</span>
+                    <h3 class="game-name" title="Your Featured Game">Arriving soon</h3>
+                    <p class="game-description">GTA VI</p>
+                    <div class="card-footer">
+                        <a href="#" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+             
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://www.riotgames.com/darkroom/1200/1dbd7211e78ce5faa7a8af9d10afad47:2b5979e3922758399ba389561e797919/ps-f2p-val-console-launch-16x9.jpg" alt="Valorant" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">FPS / Tactical</span>
+                    <h3 class="game-name" title="Valorant">Valorant</h3>
+                    <p class="game-description">A 5v5 character-based tactical shooter where precise gunplay meets unique agent abilities.</p>
+                    <div class="card-footer">
+                        <a href="https://playvalorant.com/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg" alt="Counter-Strike 2" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">FPS / Competitive</span>
+                    <h3 class="game-name" title="Counter-Strike 2">Counter-Strike 2</h3>
+                    <p class="game-description">The next tactical evolutionary leap forward for CS:GO, built completely on the Source 2 engine.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/730/CounterStrike_2/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg" alt="Cyberpunk 2077" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Sci-Fi</span>
+                    <h3 class="game-name" title="Cyberpunk 2077">Cyberpunk 2077</h3>
+                    <p class="game-description">An open-world action-adventure RPG set in the dark corporate megalopolis of Night City.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1091500/Cyberpunk_2077/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg" alt="Grand Theft Auto V" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Action / Open World</span>
+                    <h3 class="game-name" title="Grand Theft Auto V">Grand Theft Auto V</h3>
+                    <p class="game-description">Explore the massive, living world of Los Santos and pull off series of dangerous heists.</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/grand-theft-auto-v" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/header.jpg" alt="Apex Legends" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Battle Royale / FPS</span>
+                    <h3 class="game-name" title="Apex Legends">Apex Legends</h3>
+                    <p class="game-description">Master a growing roster of legendary characters with powerful tactical abilities in this hero shooter.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1172470/Apex_Legends/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg" alt="Elden Ring" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Souls-like</span>
+                    <h3 class="game-name" title="Elden Ring">Elden Ring</h3>
+                    <p class="game-description">Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring in the Lands Between.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1245620/ELDEN_RING/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/header.jpg" alt="Baldur's Gate 3" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Strategy</span>
+                    <h3 class="game-name" title="Baldur's Gate 3">Baldur's Gate 3</h3>
+                    <p class="game-description">Gather your party and return to the Forgotten Realms in a tale of fellowship, betrayal, and sacrifice.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1086940/Baldurs_Gate_3/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn2.unrealengine.com/the-future-of-fortnite-is-here-1920x1080-fd281a65c8ef.jpg" alt="Fortnite" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Battle Royale / Casual</span>
+                    <h3 class="game-name" title="Fortnite">Fortnite</h3>
+                    <p class="game-description">Drop in, squad up, and compete to be the last one standing in Battle Royale, or build custom worlds.</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/fortnite" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://image.api.playstation.com/vulcan/ap/rnd/202603/3122/5090d13ef020de9139a5bb21ad2f26a8c5c1c8d2b432aa92.jpg" alt="Minecraft" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Sandbox / Survival</span>
+                    <h3 class="game-name" title="Minecraft">Minecraft</h3>
+                    <p class="game-description">Explore infinite blocky worlds and build everything from simple homes to complex structures.</p>
+                    <div class="card-footer">
+                        <a href="https://www.minecraft.net/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/252950/header.jpg" alt="Rocket League" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Sports / Arcade</span>
+                    <h3 class="game-name" title="Rocket League">Rocket League</h3>
+                    <p class="game-description">Welcome to the high-powered hybrid of arcade-style soccer and chaotic vehicular mayhem!</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/rocket-league" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://i0.wp.com/highschool.latimes.com/wp-content/uploads/2021/09/league-of-legends.jpeg?fit=1200%2C668&ssl=1" alt="League of Legends" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">MOBA / Strategy</span>
+                    <h3 class="game-name" title="League of Legends">League of Legends</h3>
+                    <p class="game-description">A team-based strategy game where two teams of five powerful champions face off to destroy the enemy base.</p>
+                    <div class="card-footer">
+                        <a href="https://www.leagueoflegends.com/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg" alt="Dota 2" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">MOBA / Competitive</span>
+                    <h3 class="game-name" title="Dota 2">Dota 2</h3>
+                    <p class="game-description">Every day, millions of players worldwide enter battle as one of over a hundred Dota heroes.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/570/Dota_2/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQB2DlXBk8epmAOzQ9ji_EejLCMA835DRV9g&s" alt="Overwatch 2" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">FPS / Hero Shooter</span>
+                    <h3 class="game-name" title="Overwatch 2">Overwatch 2</h3>
+                    <p class="game-description">An optimistic, ever-evolving, free-to-play team-based action game set in a shared future.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/2357570/Overwatch_2/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1938090/header.jpg" alt="Call of Duty: Warzone" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">FPS / Battle Royale</span>
+                    <h3 class="game-name" title="Call of Duty: Warzone">Call of Duty: Warzone</h3>
+                    <p class="game-description">Welcome to Call of Duty: Warzone, the massive free-to-play combat arena featuring maps like Urzikstan.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1962660/Call_of_Duty/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1085660/header.jpg" alt="Destiny 2" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">FPS / MMO Looter</span>
+                    <h3 class="game-name" title="Destiny 2">Destiny 2</h3>
+                    <p class="game-description">Dive into the world of Destiny 2 to explore the mysteries of the solar system and experience responsive FPS combat.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1085660/Destiny_2/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg" alt="The Witcher 3" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Story Rich</span>
+                    <h3 class="game-name" title="The Witcher 3: Wild Hunt">The Witcher 3: Wild Hunt</h3>
+                    <p class="game-description">You are Geralt of Rivia, mercenary monster slayer. Before you stands a war-torn, monster-infested continent.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/292030/The_Witcher_3_Wild_Hunt/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/header.jpg" alt="Red Dead Redemption 2" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Action / Open World</span>
+                    <h3 class="game-name" title="Red Dead Redemption 2">Red Dead Redemption 2</h3>
+                    <p class="game-description">Winner of over 175 Game of the Year Awards, RDR2 is an epic tale of honor and loyalty at the dawn of the modern age.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1174180/Red_Dead_Redemption_2/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/553850/header.jpg" alt="Helldivers 2" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Shooter / Co-Op</span>
+                    <h3 class="game-name" title="Helldivers 2">Helldivers 2</h3>
+                    <p class="game-description">Join the Helldivers and fight for freedom across a hostile galaxy in a fast, frantic, third-person shooter squad game.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/553850/HELLDIVERS_2/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1623730/header.jpg" alt="Palworld" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Survival / Sandbox</span>
+                    <h3 class="game-name" title="Palworld">Palworld</h3>
+                    <p class="game-description">Fight, farm, build and work alongside mysterious creatures called "Pals" in this vast open-world multiplayer game.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1623730/Palworld/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL2vzkJxRDEbmnkeh8M1uqIY4G3Dfck2EHfQ&s" alt="Genshin Impact" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Anime</span>
+                    <h3 class="game-name" title="Genshin Impact">Genshin Impact</h3>
+                    <p class="game-description">Embark on a journey across Teyvat to find your lost sibling and unravel the magical mysteries of the elements.</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/genshin-impact" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://webstatic.hoyoverse.com/upload/op-public/2023/09/14/3c862d085db721a5625b6e12649399bc_5096494079299377390.png" alt="Honkai: Star Rail" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Turn-Based</span>
+                    <h3 class="game-name" title="Honkai: Star Rail">Honkai: Star Rail</h3>
+                    <p class="game-description">Hop aboard the Astral Express and experience the galaxy's infinite wonders across a strategic turn-based journey.</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/honkai-star-rail" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2GY-q7y6ds8pB78iXKW3uRRVGWT_tW7B55Q&s" alt="Tom Clancy's Rainbow Six Siege" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">FPS / Tactical</span>
+                    <h3 class="game-name" title="Rainbow Six Siege">Rainbow Six Siege</h3>
+                    <p class="game-description">Master the art of destruction and gadgetry in high-stakes, close-quarters tactical team action.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/359550/Tom_Clancys_Rainbow_Six_Siege/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/252490/header.jpg" alt="Rust" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Survival / PVP</span>
+                    <h3 class="game-name" title="Rust">Rust</h3>
+                    <p class="game-description">The only aim in Rust is to survive. Overcome struggles such as hunger, thirst and cold, and stay safe from other players.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/252490/Rust/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/230410/header.jpg" alt="Warframe" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Action / Sci-Fi Looter</span>
+                    <h3 class="game-name" title="Warframe">Warframe</h3>
+                    <p class="game-description">Awaken as an unstoppable warrior and fight alongside your friends in this story-driven free-to-play action RPG.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/230410/Warframe/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1172620/header.jpg" alt="Sea of Thieves" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Adventure / Co-Op</span>
+                    <h3 class="game-name" title="Sea of Thieves">Sea of Thieves</h3>
+                    <p class="game-description">Sea of Thieves offers the essential pirate experience, from sailing and fighting to exploring and looting.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1172620/Sea_of_Thieves_2024_Edition/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/381210/header.jpg" alt="Dead by Daylight" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Horror / Asymmetrical</span>
+                    <h3 class="game-name" title="Dead by Daylight">Dead by Daylight</h3>
+                    <p class="game-description">Dead by Daylight is a multiplayer 4v1 horror game where one player takes on the role of the brutal Killer.</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/dead-by-daylight" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg" alt="Stardew Valley" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Simulation / Cozy</span>
+                    <h3 class="game-name" title="Stardew Valley">Stardew Valley</h3>
+                    <p class="game-description">You've inherited your grandfather's old farm plot in Stardew Valley. Armed with hand-me-down tools, begin your life.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/413150/Stardew_Valley/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/105600/header.jpg" alt="Terraria" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Sandbox / 2D Adventure</span>
+                    <h3 class="game-name" title="Terraria">Terraria</h3>
+                    <p class="game-description">Dig, Fight, Explore, Build! Nothing is impossible in this action-packed adventure sandbox game.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/105600/Terraria/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/990080/header.jpg" alt="Hogwarts Legacy" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Magic</span>
+                    <h3 class="game-name" title="Hogwarts Legacy">Hogwarts Legacy</h3>
+                    <p class="game-description">Experience Hogwarts in the 1800s. Your character is a student who holds the key to an ancient secret.</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/hogwarts-legacy" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1145350/header.jpg" alt="Hades II" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Rogue-like / Action</span>
+                    <h3 class="game-name" title="Hades II">Hades II</h3>
+                    <p class="game-description">Battle beyond the Underworld using dark sorcery to take down the Titan of Time in this enchanting sequel.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1145350/Hades_II/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2246340/header.jpg" alt="Monster Hunter Wilds" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Action / Hunting</span>
+                    <h3 class="game-name" title="Monster Hunter Wilds">Monster Hunter Wilds</h3>
+                    <p class="game-description">The next generation in hunting action. Track, battle, and overcome monumental monsters in untamed environments.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/2636390/Monster_Hunter_Wilds/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1966720/header.jpg" alt="Lethal Company" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Horror / Co-Op</span>
+                    <h3 class="game-name" title="Lethal Company">Lethal Company</h3>
+                    <p class="game-description">A co-op horror game about scavenging scrap from industrialized moons to meet the Company's profit quota.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1966720/Lethal_Company/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/739630/header.jpg" alt="Phasmophobia" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Horror / Psychological</span>
+                    <h3 class="game-name" title="Phasmophobia">Phasmophobia</h3>
+                    <p class="game-description">Phasmophobia is a 4-player, online co-op psychological horror game where you and your team hunt for ghosts.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/739630/Phasmophobia/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/264710/header.jpg" alt="Subnautica" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Survival / Exploration</span>
+                    <h3 class="game-name" title="Subnautica">Subnautica</h3>
+                    <p class="game-description">Descend into the depths of an alien underwater world filled with wonder and extreme peril.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/264710/Subnautica/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1716740/header.jpg" alt="Starfield" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Space</span>
+                    <h3 class="game-name" title="Starfield">Starfield</h3>
+                    <p class="game-description">Create any character you want and explore with unparalleled freedom as you embark on an epic journey through space.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1716740/Starfield/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg" alt="Sid Meier's Civilization VI" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Strategy / Turn-Based</span>
+                    <h3 class="game-name" title="Civilization VI">Civilization VI</h3>
+                    <p class="game-description">Build an empire to stand the test of time using deep turns, military strategy, and cultural influence.</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/sid-meiers-civilization-vi" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/949230/header.jpg" alt="Cities: Skylines II" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Simulation / City Builder</span>
+                    <h3 class="game-name" title="Cities: Skylines II">Cities: Skylines II</h3>
+                    <p class="game-description">Raise a city from the ground up and transform it into a thriving metropolis with highly realistic logistics simulation.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/949230/Cities_Skylines_II/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2344520/header.jpg" alt="Diablo IV" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Action Looter</span>
+                    <h3 class="game-name" title="Diablo IV">Diablo IV</h3>
+                    <p class="game-description">Join the endless battle between High Heavens and Burning Hells in this dark action RPG sandbox experience.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/2344520/Diablo_IV/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://bnetcmsus-a.akamaihd.net/cms/blog_header/wow.jpg" alt="World of Warcraft" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">MMORPG / Fantasy</span>
+                    <h3 class="game-name" title="World of Warcraft">World of Warcraft</h3>
+                    <p class="game-description">Join thousands of mighty heroes in Azeroth, a world of magic, dangerous monsters, and endless secrets.</p>
+                    <div class="card-footer">
+                        <a href="https://worldofwarcraft.blizzard.com/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/39210/header.jpg" alt="Final Fantasy XIV" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">MMORPG / Story Rich</span>
+                    <h3 class="game-name" title="Final Fantasy XIV">Final Fantasy XIV</h3>
+                    <p class="game-description">Take part in an epic, ever-changing adventure as you journey and explore with friends from all around the globe.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/39210/FINAL_FANTASY_XIV_Online/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2195250/header.jpg" alt="EA SPORTS FC" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Sports / Football</span>
+                    <h3 class="game-name" title="EA SPORTS FC">EA SPORTS FC</h3>
+                    <p class="game-description">Experience the most true-to-football experience with HyperMotion technology and updated global club rosters.</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/ea-sports-fc-24" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1222670/header.jpg" alt="The Sims 4" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Simulation / Casual</span>
+                    <h3 class="game-name" title="The Sims 4">The Sims 4</h3>
+                    <p class="game-description">Unleash your imagination and create a unique world of Sims that express your individual taste and style.</p>
+                    <div class="card-footer">
+                        <a href="https://store.epicgames.com/p/the-sims-4" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/367520/header.jpg" alt="Hollow Knight" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Metroidvania / Indie</span>
+                    <h3 class="game-name" title="Hollow Knight">Hollow Knight</h3>
+                    <p class="game-description">Forge your own path in Hollow Knight! An epic action adventure through a vast ruined kingdom of insects.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/367520/Hollow_Knight/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/578080/header.jpg" alt="PUBG: BATTLEGROUNDS" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Battle Royale / Shooter</span>
+                    <h3 class="game-name" title="PUBG: BATTLEGROUNDS">PUBG: BATTLEGROUNDS</h3>
+                    <p class="game-description">Land on strategic locations, loot weapons and supplies, and survive to become the last team standing.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/578080/PUBG_BATTLEGROUNDS/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/394360/header.jpg" alt="Hearts of Iron IV" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Strategy / Grand Strategy</span>
+                    <h3 class="game-name" title="Hearts of Iron IV">Hearts of Iron IV</h3>
+                    <p class="game-description">Victory is at your fingertips! Your ability to lead your nation is your supreme operational weapon.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/394360/Hearts_of_Iron_IV/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2399830/header.jpg" alt="Ark: Survival Ascended" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Survival / Dinosaurs</span>
+                    <h3 class="game-name" title="Ark: Survival Ascended">Ark: Survival Ascended</h3>
+                    <p class="game-description">Respawn into a pristine dinosaur survival experience, reimagined from the ground up utilizing Unreal Engine 5.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/2378500/ARK_Survival_Ascended/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/tft-keyart.jpg" alt="Teamfight Tactics" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Auto-Battler / Strategy</span>
+                    <h3 class="game-name" title="Teamfight Tactics">Teamfight Tactics</h3>
+                    <p class="game-description">Draft, position, and fight your way to victory in an 8-way free-for-all strategic battle arena.</p>
+                    <div class="card-footer">
+                        <a href="https://teamfighttactics.leagueoflegends.com/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/377160/header.jpg" alt="Fallout 4" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Post-Apocalyptic</span>
+                    <h3 class="game-name" title="Fallout 4">Fallout 4</h3>
+                    <p class="game-description">As the sole survivor of Vault 111, you enter a world destroyed by nuclear war. Every second is a fight for survival.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/377160/Fallout_4/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/582010/header.jpg" alt="Monster Hunter: World" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Action / RPG</span>
+                    <h3 class="game-name" title="Monster Hunter: World">Monster Hunter: World</h3>
+                    <p class="game-description">Welcome to a new world! Take on the role of a hunter and slay ferocious monsters in a living ecosystem.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/582010/Monster_Hunter_World/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://upload-os-bbs.hoyolab.com/upload/2024/07/04/zzz-keyart.jpg" alt="Zenless Zone Zero" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">Action / Hack & Slash</span>
+                    <h3 class="game-name" title="Zenless Zone Zero">Zenless Zone Zero</h3>
+                    <p class="game-description">Navigate post-apocalyptic urban areas known as Hollows, combat aggressive monsters, and uncover New Eridu secrets.</p>
+                    <div class="card-footer">
+                        <a href="https://zenless.hoyoverse.com/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+             <div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2358720/header.jpg" alt="Black Myth: Wukong" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Action / RPG / Mythology</span>
+        <h3 class="game-name" title="Black Myth: Wukong">Black Myth: Wukong</h3>
+        <p class="game-description">An epic action RPG rooted in Chinese mythology. Journey as the Destined One to uncover the truth behind a legendary tale.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2358720/Black_Myth_Wukong/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://image.api.playstation.com/vulcan/ap/rnd/202305/2309/alanwake2.jpg" alt="Alan Wake 2" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Psychological Horror / Narrative</span>
+        <h3 class="game-name" title="Alan Wake 2">Alan Wake 2</h3>
+        <p class="game-description">A string of ritualistic murders threatens Bright Falls. Unravel a terrifying psychological horror story spanning two realities.</p>
+        <div class="card-footer">
+            <a href="https://store.epicgames.com/p/alan-wake-2" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://image.api.playstation.com/vulcan/ap/rnd/202306/spiderman2.jpg" alt="Marvel's Spider-Man 2" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Action / Adventure / Open World</span>
+        <h3 class="game-name" title="Marvel's Spider-Man 2">Marvel's Spider-Man 2</h3>
+        <p class="game-description">Swing through an expanded New York City as both Peter Parker and Miles Morales facing off against Venom and Kraven.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2649100/Marvels_SpiderMan_2/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2054970/header.jpg" alt="Dragon's Dogma 2" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Action / RPG / Fantasy</span>
+        <h3 class="game-name" title="Dragon's Dogma 2">Dragon's Dogma 2</h3>
+        <p class="game-description">A narrative-driven action RPG that challenges players to choose their own experience in a deep, explorable fantasy world.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2054970/Dragons_Dogma_2/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2215430/header.jpg" alt="Ghost of Tsushima" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Action / Adventure / Open World</span>
+        <h3 class="game-name" title="Ghost of Tsushima">Ghost of Tsushima</h3>
+        <p class="game-description">Forge a new path and wage an unconventional war to liberate Tsushima Island from the invading Mongol empire.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2215430/Ghost_of_Tsushima_Director_Cut/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2322010/header.jpg" alt="God of War Ragnarök" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Action / Adventure / Story</span>
+        <h3 class="game-name" title="God of War Ragnarök">God of War Ragnarök</h3>
+        <p class="game-description">Join Kratos and Atreus on a mythic journey for answers and allies before the prophesied battle that ends the world arrives.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2322010/God_of_War_Ragnarok/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/814380/header.jpg" alt="Sekiro: Shadows Die Twice" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Action / Difficult / Souls-like</span>
+        <h3 class="game-name" title="Sekiro: Shadows Die Twice">Sekiro: Shadows Die Twice</h3>
+        <p class="game-description">Carve your own clever path to vengeance as a disgraced warrior in late 1500s Sengoku Japan.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/814380/Sekiro_Shadows_Die_Twice__GOTY_Edition/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2050650/header.jpg" alt="Resident Evil 4" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Survival Horror / Action</span>
+        <h3 class="game-name" title="Resident Evil 4">Resident Evil 4</h3>
+        <p class="game-description">Survival is just the beginning. Leon S. Kennedy tracks the US president's missing daughter to a secluded European village.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2050650/Resident_Evil_4/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/782330/header.jpg" alt="Doom Eternal" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">FPS / Fast-Paced / Action</span>
+        <h3 class="game-name" title="Doom Eternal">Doom Eternal</h3>
+        <p class="game-description">Hell’s armies have invaded Earth. Become the Slayer in an epic single-player campaign to conquer demons across dimensions.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/782330/DOOM_Eternal/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1364780/header.jpg" alt="Street Fighter 6" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Fighting / Competitive</span>
+        <h3 class="game-name" title="Street Fighter 6">Street Fighter 6</h3>
+        <p class="game-description">Powered by Capcom’s proprietary RE ENGINE, experience a brand-new era of fighting game mechanics and street culture.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1364780/Street_Fighter_6/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1778820/header.jpg" alt="Tekken 8" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Fighting / Arcade</span>
+        <h3 class="game-name" title="Tekken 8">Tekken 8</h3>
+        <p class="game-description">Fist Meets Fate. Completely redesigned character visuals, aggressive new mechanics, and the continuation of the tragic bloodline feud.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1778820/TEKKEN_8/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1971870/header.jpg" alt="Mortal Kombat 1" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Fighting / Gore / Action</span>
+        <h3 class="game-name" title="Mortal Kombat 1">Mortal Kombat 1</h3>
+        <p class="game-description">Discover a reborn Mortal Kombat Universe created by Fire God Liu Kang. New fighting systems, story lines, and brutal fatalities.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1971870/Mortal_Kombat_1/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1551360/header.jpg" alt="Forza Horizon 5" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Racing / Open World / Simulation</span>
+        <h3 class="game-name" title="Forza Horizon 5">Forza Horizon 5</h3>
+        <p class="game-description">Explore the vibrant, ever-evolving open-world landscapes of Mexico with limitless, fun driving action in hundreds of elite cars.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1551360/Forza_Horizon_5/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2420110/header.jpg" alt="Horizon Forbidden West" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Sci-Fi / Action / Open World</span>
+        <h3 class="game-name" title="Horizon Forbidden West">Horizon Forbidden West</h3>
+        <p class="game-description">Brave an expansive, majestic frontier land. Battle massive rogue mechanical beasts while investigating a mysterious global blight.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2420110/Horizon_Forbidden_West_Complete_Edition/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1850570/header.jpg" alt="Death Stranding" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Sci-Fi / Cinematic / Open World</span>
+        <h3 class="game-name" title="Death Stranding">Death Stranding</h3>
+        <p class="game-description">From legendary creator Hideo Kojima comes a genre-defying experience. Sam Bridges must brave a world utterly transformed.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1850570/DEATH_STRANDING_DIRECTORS_CUT/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1687950/header.jpg" alt="Persona 5 Royal" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">JRPG / Turn-Based / Anime</span>
+        <h3 class="game-name" title="Persona 5 Royal">Persona 5 Royal</h3>
+        <p class="game-description">Don the mask of a Phantom Thief, stage grand heists, infiltrate the minds of the corrupt, and alter societal paths.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1687950/Persona_5_Royal/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1426210/header.jpg" alt="It Takes Two" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Co-Op Only / Puzzle / Platformer</span>
+        <h3 class="game-name" title="It Takes Two">It Takes Two</h3>
+        <p class="game-description">Embark on the craziest journey of your life in a genre-bending platform adventure built purely for seamless split-screen co-op.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1426210/It_Takes_Two/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2208920/header.jpg" alt="Assassin's Creed Valhalla" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Action / Historical / RPG</span>
+        <h3 class="game-name" title="Assassin's Creed Valhalla">AC Valhalla</h3>
+        <p class="game-description">Become Eivor, a legendary Viking raider. Explore England’s Dark Ages, raid your enemies, and grow your clan's settlement.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2208920/Assassins_Creed_Valhalla/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1774580/header.jpg" alt="Star Wars Jedi: Survivor" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Sci-Fi / Action / Souls-lite</span>
+        <h3 class="game-name" title="Star Wars Jedi: Survivor">Jedi: Survivor</h3>
+        <p class="game-description">The story of Cal Kestis continues in a galaxy-spanning third-person action-adventure game from Respawn Entertainment.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1774580/STAR_WARS_Jedi_Survivor/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1363080/header.jpg" alt="Manor Lords" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Strategy / City Builder / Medieval</span>
+        <h3 class="game-name" title="Manor Lords">Manor Lords</h3>
+        <p class="game-description">A medieval strategy game featuring in-depth city building, large-scale tactical battles, and complex economic simulations.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1363080/Manor_Lords/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1203620/header.jpg" alt="Enshrouded" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Survival / Voxel / RPG</span>
+        <h3 class="game-name" title="Enshrouded">Enshrouded</h3>
+        <p class="game-description">You are the Flameborn, last hope of a dying race. Awaken, survive the corrupting fog, and reclaim your lost kingdom.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1203620/Enshrouded/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1643320/header.jpg" alt="S.T.A.L.K.E.R. 2" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">FPS / Horror / Open World</span>
+        <h3 class="game-name" title="S.T.A.L.K.E.R. 2">S.T.A.L.K.E.R. 2</h3>
+        <p class="game-description">Explore the massive Chornobyl Exclusion Zone full of dangerous anomalies, deadly mutants, and warring stalker factions.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1643320/STALKER_2_Heart_of_Chornobyl/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1845910/header.jpg" alt="Dragon Age: The Veilguard" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">RPG / Fantasy / Story</span>
+        <h3 class="game-name" title="Dragon Age: The Veilguard">Dragon Age</h3>
+        <p class="game-description">Enter the vibrant fantasy world of Thedas. Unite the Veilguard and defy rogue ancient gods threatening reality.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1845910/Dragon_Age_The_Veilguard/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://image.api.playstation.com/vulcan/ap/rnd/202402/ff7rebirth.jpg" alt="Final Fantasy VII Rebirth" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">RPG / Action / Adventure</span>
+        <h3 class="game-name" title="Final Fantasy VII Rebirth">FFVII Rebirth</h3>
+        <p class="game-description">The journey into the unknown continues. Cloud and his comrades escape Midgar to hunt down the legendary Sephiroth.</p>
+        <div class="card-footer">
+            <a href="https://store.epicgames.com" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1446780/header.jpg" alt="Monster Hunter Rise" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Action / Co-Op / Grind</span>
+        <h3 class="game-name" title="Monster Hunter Rise">MH Rise</h3>
+        <p class="game-description">Rise to the challenge and join the hunt! Traverse vertical ninja-inspired landscapes and take down aggressive behemoths.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1446780/MONSTER_HUNTER_RISE/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1627720/header.jpg" alt="Lies of P" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Souls-like / Dark Fantasy</span>
+        <h3 class="game-name" title="Lies of P">Lies of P</h3>
+        <p class="game-description">A thrilling dark fantasy souls-like game inspired by the story of Pinocchio, set in a cruel, elegant Belle Époque city.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1627720/Lies_of_P/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1693980/header.jpg" alt="Dead Space" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Sci-Fi Horror / Survival</span>
+        <h3 class="game-name" title="Dead Space">Dead Space</h3>
+        <p class="game-description">The sci-fi survival-horror classic returns, completely rebuilt from the ground up to offer a deeper, more immersive nightmare.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1693980/Dead_Space/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1888160/header.jpg" alt="Armored Core VI" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Mecha / Fast Action / Customization</span>
+        <h3 class="game-name" title="Armored Core VI">Armored Core VI</h3>
+        <p class="game-description">Assemble and customize your own high-speed tactical mech suit to deploy into massive, intense crossfire battles.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1888140/ARMORED_CORE_VI_FIRES_OF_RUBICON/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1244090/header.jpg" alt="Sea of Stars" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Indie / Retro RPG / Turn-Based</span>
+        <h3 class="game-name" title="Sea of Stars">Sea of Stars</h3>
+        <p class="game-description">A gorgeous pixel-art turn-based RPG inspired by classics. Combines modern traversal systems with retro combat timing.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1244090/Sea_of_Stars/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1868140/header.jpg" alt="Dave the Diver" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Casual / Management / Adventure</span>
+        <h3 class="game-name" title="Dave the Diver">Dave the Diver</h3>
+        <p class="game-description">Explore deep ocean depths by day and manage a booming, high-end exotic sushi restaurant layout by night.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1868140/DAVE_THE_DIVER/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2379780/header.jpg" alt="Balatro" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Indie / Roguelike / Cards</span>
+        <h3 class="game-name" title="Balatro">Balatro</h3>
+        <p class="game-description">A hypnotic poker-themed deckbuilder where you play illegal joker combinations to trigger game-breaking scores.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2379780/Balatro/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2074920/header.jpg" alt="The First Descendant" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Looter Shooter / Sci-Fi / Free</span>
+        <h3 class="game-name" title="The First Descendant">First Descendant</h3>
+        <p class="game-description">A high-fidelity cooperative third-person looter shooter. Defend humanity against alien invaders with powerful abilities.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2074900/The_First_Descendant/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2139460/header.jpg" alt="Once Human" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Survival / Open World / Supernatural</span>
+        <h3 class="game-name" title="Once Human">Once Human</h3>
+        <p class="game-description">A multiplayer survival game set in a post-apocalyptic sandbox infested with reality-bending alien entities.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/2139460/Once_Human/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1604030/header.jpg" alt="V Rising" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Survival / Vampire / Action</span>
+        <h3 class="game-name" title="V Rising">V Rising</h3>
+        <p class="game-description">Awaken as a weakened vampire. Hunt for blood to regain your strength, dodge the sun, and build a massive castle empire.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1604030/V_Rising/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/548430/header.jpg" alt="Deep Rock Galactic" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Co-Op / Shooter / Mining</span>
+        <h3 class="game-name" title="Deep Rock Galactic">Deep Rock Galactic</h3>
+        <p class="game-description">Team up with space dwarves to mine fully destructible underground caves and fight endless waves of alien bugs.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/548430/Deep_Rock_Galactic/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/294100/header.jpg" alt="RimWorld" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Simulation / Management / Sandbox</span>
+        <h3 class="game-name" title="RimWorld">RimWorld</h3>
+        <p class="game-description">A sci-fi colony sim driven by an intelligent AI storyteller that creates narratives out of chaos and survival events.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/294100/RimWorld/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/427520/header.jpg" alt="Factorio" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Automation / Strategy / Building</span>
+        <h3 class="game-name" title="Factorio">Factorio</h3>
+        <p class="game-description">Build, automate, and maintain complex assembly lines to manufacture resources and protect your automated infrastructure.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/427520/Factorio/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/526870/header.jpg" alt="Satisfactory" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">First-Person / Automation / Open World</span>
+        <h3 class="game-name" title="Satisfactory">Satisfactory</h3>
+        <p class="game-description">A first-person open-world factory building game with a dash of exploration and combat on an alien planet.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/526870/Satisfactory/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1158310/header.jpg" alt="Crusader Kings III" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Grand Strategy / RPG / Historical</span>
+        <h3 class="game-name" title="Crusader Kings III">Crusader Kings III</h3>
+        <p class="game-description">Guide a historical noble dynasty through generations, acquiring territory and political influence through marriage, war, and plots.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1158310/Crusader_Kings_III/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/236850/header.jpg" alt="Europa Universalis IV" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Grand Strategy / Imperial / Sandbox</span>
+        <h3 class="game-name" title="Europa Universalis IV">Europa Universalis IV</h3>
+        <p class="game-description">Rule a nation through centuries of historical development. Balance trade, warfare, diplomacy, and global exploration limits.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/236850/Europa_Universalis_IV/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1142710/header.jpg" alt="Total War: Warhammer III" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">RTS / Turn-Based Strategy / Fantasy</span>
+        <h3 class="game-name" title="Total War: Warhammer III">Total War: WH3</h3>
+        <p class="game-description">Rally your massive fantastical armies and plunge into a dimension of mind-bending tactical conflict in the Warhammer universe.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1142710/Total_War_WARHAMMER_III/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1466860/header.jpg" alt="Age of Empires IV" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Real-Time Strategy / Classic</span>
+        <h3 class="game-name" title="Age of Empires IV">Age of Empires IV</h3>
+        <p class="game-description">Position yourself at the center of epic historical battles that shaped the global landscapes of the modern world.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1466860/Age_of_Empires_IV_Anniversary_Edition/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/916440/header.jpg" alt="Anno 1800" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">City Builder / Strategy / Industrial</span>
+        <h3 class="game-name" title="Anno 1800">Anno 1800</h3>
+        <p class="game-description">Lead the Industrial Revolution. Build massive metropolises, manage intricate logistics channels, and colonize new continents.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/916440/Anno_1800/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/2252570/header.jpg" alt="Football Manager 2024" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Sports / Simulation / Management</span>
+        <h3 class="game-name" title="Football Manager 2024">FM 2024</h3>
+        <p class="game-description">Step into the shoes of a real football manager. Control budgets, tactical frameworks, and global player scouting pipelines.</p>
+        <div class="card-footer">
+            <a href="https://store.epicgames.com" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://image.api.playstation.com/vulcan/ap/rnd/202202/gt7-keyart.jpg" alt="Gran Turismo 7" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Racing / Simulation / Automotive</span>
+        <h3 class="game-name" title="Gran Turismo 7">Gran Turismo 7</h3>
+        <p class="game-description">The ultimate racing simulator. Customize, collect, and race hundreds of legendary cars on realistic global tracks.</p>
+        <div class="card-footer">
+            <a href="https://www.playstation.com" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/805550/header.jpg" alt="Assetto Corsa Competizione" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Racing / Hardcore Sim / GT3</span>
+        <h3 class="game-name" title="Assetto Corsa Competizione">Assetto Corsa Comp</h3>
+        <p class="game-description">Experience the true performance atmosphere of the GT3 championship with laser-scanned tracks and realistic vehicle physics.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/805550/Assetto_Corsa_Competizione/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/534380/header.jpg" alt="Dying Light 2" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Zombies / Parkour / Action</span>
+        <h3 class="game-name" title="Dying Light 2 Stay Human">Dying Light 2</h3>
+        <p class="game-description">The virus won. Use unmatched parkour traversal abilities and brutal melee combat configurations to survive the infected hordes.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/534380/Dying_Light_2_Stay_Human/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1304930/header.jpg" alt="The Outlast Trials" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Survival Horror / Co-Op</span>
+        <h3 class="game-name" title="The Outlast Trials">Outlast Trials</h3>
+        <p class="game-description">Set during the Cold War era. Work with friends or survive completely alone against sickening Murkoff Corporation test facilities.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/1150760/The_Outlast_Trials/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/304430/header.jpg" alt="Inside" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Indie / Atmospheric / Puzzle</span>
+        <h3 class="game-name" title="Inside">Inside</h3>
+        <p class="game-description">Hunted and completely alone, a young boy finds himself drawn into the terrifying center of a dark, dystopian project.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/304430/INSIDE/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+</div>
+ 
+<div class="game-card">
+    <div class="game-img-container">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/753640/header.jpg" alt="Outer Wilds" class="game-img">
+    </div>
+    <div class="game-info">
+        <span class="game-type">Space Exploration / Mystery / Loop</span>
+        <h3 class="game-name" title="Outer Wilds">Outer Wilds</h3>
+        <p class="game-description">An open-world mystery about a solar system trapped in an endless time loop. Uncover ancient secrets before the sun explodes.</p>
+        <div class="card-footer">
+            <a href="https://store.steampowered.com/app/753640/Outer_Wilds/" target="_blank" class="btn-download">Download</a>
+        </div>
+    </div>
+              </div>
+            
+            <div class="game-card">
+                <div class="game-img-container">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg" alt="Elden Ring" class="game-img">
+                </div>
+                <div class="game-info">
+                    <span class="game-type">RPG / Souls-like</span>
+                    <h3 class="game-name" title="Elden Ring">Elden Ring</h3>
+                    <p class="game-description">Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring in the Lands Between.</p>
+                    <div class="card-footer">
+                        <a href="https://store.steampowered.com/app/1245620/ELDEN_RING/" target="_blank" class="btn-download">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="no-results" id="noResults">No games matched your search query.</div>
+
+        </div> </main>
+
+    <footer>
+    <p>&copy; All rights belongs to Game Treasury 2026. Bulid with precise and creative ways for better experience.</p>
+    
+    <div class="footer-socials">
+        <a href="https://www.youtube.com/@Plixelia-Gaming" target="_blank" class="youtube-link">
+            <i class="fa-brands fa-youtube youtube-logo"></i> Watch on YouTube
+        </a>
+    </div>
+</footer>
+
+   <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. FIRST-TIME VISIT WELCOME NOTICE (WITH PERSISTENT MEMORY) ---
+            const welcomeModal = document.getElementById('welcomeModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+
+            // Look inside the browser memory to see if they've accepted the terms before
+            const hasVisitedBefore = localStorage.getItem('vaultNoticeAccepted');
+
+            if (!hasVisitedBefore) {
+                // FIRST TIME VISITOR: Show the announcement and lock background scrolling
+                welcomeModal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+            }
+
+            closeModalBtn.addEventListener('click', () => {
+                // Smoothly fade out the notice overlay card
+                welcomeModal.classList.add('hidden');
+                // Restore standard webpage scrolling and interaction
+                document.body.classList.remove('modal-open');
+                
+                // Write a token to browser memory so they aren't bothered on refresh
+                localStorage.setItem('vaultNoticeAccepted', 'true');
+            });
+
+
+            // --- 2. SEARCH ENGINE FILTER SYSTEM ---
+            const searchBar = document.getElementById('gameSearch');
+            const gameCards = document.querySelectorAll('.game-card');
+            const matchCount = document.getElementById('matchCount');
+            const noResults = document.getElementById('noResults');
+
+            searchBar.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                let visibleCount = 0;
+
+                gameCards.forEach(card => {
+                    const gameName = card.querySelector('.game-name').textContent.toLowerCase();
+                    const gameType = card.querySelector('.game-type').textContent.toLowerCase();
+
+                    // Instantly evaluate if card criteria match user keyword input
+                    if (gameName.includes(query) || gameType.includes(query)) {
+                        card.style.display = 'flex';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Dynamically modify counter totals
+                matchCount.textContent = `Showing ${visibleCount} game${visibleCount === 1 ? '' : 's'}`;
+
+                // Pop-up a friendly feedback block if no items match the string query
+                if (visibleCount === 0) {
+                    noResults.style.display = 'block';
+                } else {
+                    noResults.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
